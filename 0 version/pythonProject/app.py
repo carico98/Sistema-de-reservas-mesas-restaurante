@@ -1,64 +1,71 @@
-import tkinter as tk
-from tkinter import ttk, messagebox
+from flask import Flask, render_template, request
 
-class RestauranteApp:
-    def __init__(self, master):
-        self.master = master
-        self.master.title("Restaurante La Buena Mesa")
+app = Flask(__name__)
 
-        self.notebook = ttk.Notebook(master)
-        self.notebook.pack(expand=True, fill="both")
+class Restaurante:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.mesas = {}
 
-        # Pestaña "Conoce un poco más de nosotros"
-        self.tab_conocenos = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab_conocenos, text="Conoce un poco más de nosotros")
-        self.descripcion_label = tk.Label(self.tab_conocenos, text="Descripción: Restaurante La Buena Mesa ofrece una amplia variedad de platos...")
-        self.descripcion_label.pack(padx=10, pady=10)
+    def agregar_mesa(self, mesa):
+        self.mesas[mesa.numero] = mesa
 
-        # Pestaña "Reservas"
-        self.tab_reservas = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab_reservas, text="Reservas")
-
-        self.nombre_label = tk.Label(self.tab_reservas, text="Nombre del Cliente:")
-        self.nombre_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        self.nombre_entry = tk.Entry(self.tab_reservas)
-        self.nombre_entry.grid(row=0, column=1, padx=10, pady=5)
-
-        # Agrega más campos y botones según tus necesidades
-
-        self.confirmar_button = tk.Button(self.tab_reservas, text="Confirmar Reserva", command=self.confirmar_reserva)
-        self.confirmar_button.grid(row=5, column=0, pady=10)
-
-        self.rechazar_button = tk.Button(self.tab_reservas, text="Rechazar Reserva", command=self.rechazar_reserva)
-        self.rechazar_button.grid(row=5, column=1, pady=10)
-
-        # Pestaña "Menú"
-        self.tab_menu = ttk.Frame(self.notebook)
-        self.notebook.add(self.tab_menu, text="Menú")
-        self.menu_label = tk.Label(self.tab_menu, text="Aquí estará nuestro menú con una amplia variedad de platos...")
-        self.menu_label.pack(padx=10, pady=10)
-
-    def confirmar_reserva(self):
-        nombre_cliente = self.nombre_entry.get()
-        # Implementa la función de confirmar reserva
-        if nombre_cliente:
-            messagebox.showinfo("Reserva Confirmada", f"Reserva confirmada para {nombre_cliente}.")
+    def hacer_reserva(self, nombre_cliente, numero_personas, mesa_numero, fecha_hora):
+        if mesa_numero in self.mesas:
+            mesa = self.mesas[mesa_numero]
+            reserva = Reserva(nombre_cliente, numero_personas, fecha_hora)
+            if mesa.reservar(reserva):
+                return f"Reserva realizada para {nombre_cliente} en la mesa {mesa_numero} el {fecha_hora}."
+            else:
+                return f"Lo sentimos, la mesa {mesa_numero} no está disponible para {numero_personas} personas en ese momento."
         else:
-            messagebox.showerror("Error", "Debe ingresar el nombre del cliente antes de confirmar la reserva.")
+            return f"No existe la mesa {mesa_numero} en {self.nombre}."
 
-    def rechazar_reserva(self):
-        # Implementa la función de rechazar reserva
-        nombre_cliente = self.nombre_entry.get()
-        if nombre_cliente:
-            messagebox.showinfo("Reserva Rechazada", f"La reserva para {nombre_cliente} ha sido rechazada.")
+
+class Mesa:
+    def __init__(self, numero, capacidad, disponible=True):
+        self.numero = numero
+        self.capacidad = capacidad
+        self.disponible = disponible
+        self.reserva = None
+
+    def reservar(self, reserva):
+        if self.disponible and self.capacidad >= reserva.numero_personas:
+            self.disponible = False
+            self.reserva = reserva
+            return True
         else:
-            messagebox.showerror("Error", "Debe ingresar el nombre del cliente antes de rechazar la reserva.")
+            return False
 
-def main():
-    root = tk.Tk()
-    app = RestauranteApp(root)
-    root.mainloop()
 
-if __name__ == "__main__":
-    main()
+class Reserva:
+    def __init__(self, nombre_cliente, numero_personas, fecha_hora):
+        self.nombre_cliente = nombre_cliente
+        self.numero_personas = numero_personas
+        self.fecha_hora = fecha_hora
+
+
+restaurante = Restaurante("Mi Restaurante")
+restaurante.agregar_mesa(Mesa(1, 4))
+restaurante.agregar_mesa(Mesa(2, 6))
+restaurante.agregar_mesa(Mesa(3, 2))
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        nombre_cliente = request.form['nombre_cliente']
+        numero_personas = int(request.form['numero_personas'])
+        mesa_numero = int(request.form['mesa_numero'])
+        fecha_hora = request.form['fecha_hora']
+
+        mensaje = restaurante.hacer_reserva(nombre_cliente, numero_personas, mesa_numero, fecha_hora)
+        return render_template('index.html', mensaje=mensaje)
+    else:
+        return render_template('index.html', mensaje='')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
 
