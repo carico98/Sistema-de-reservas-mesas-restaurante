@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Reservas de Mesas</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-5 mb-4">Sistema de Reservas de Mesas</h1>
+        <form method="POST">
+            <div class="form-group">
+                <label for="nombre_cliente">Nombre del Cliente:</label>
+                <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" required>
+            </div>
+            <div class="form-group">
+                <label for="numero_personas">Número de Personas:</label>
+                <input type="number" class="form-control" id="numero_personas" name="numero_personas" required>
+            </div>
+            <div class="form-group">
+                <label for="mesa_numero">Número de Mesa:</label>
+                <input type="number" class="form-control" id="mesa_numero" name="mesa_numero" required>
+            </div>
+            <div class="form-group">
+                <label for="fecha_hora">Fecha y Hora (YYYY-MM-DD HH:MM):</label>
+                <input type="text" class="form-control" id="fecha_hora" name="fecha_hora" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Hacer Reserva</button>
+        </form>
+        {% if mensaje %}
+            <div class="mt-4 alert alert-success" role="alert">
+                {{ mensaje }}
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>
