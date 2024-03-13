@@ -3,36 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Reservas de Mesas</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>{{ restaurante_info.nombre }}</title>
 </head>
 <body>
-    <div class="container">
-        <h1 class="mt-5 mb-4">Sistema de Reservas de Mesas</h1>
-        <form method="POST">
-            <div class="form-group">
-                <label for="nombre_cliente">Nombre del Cliente:</label>
-                <input type="text" class="form-control" id="nombre_cliente" name="nombre_cliente" required>
-            </div>
-            <div class="form-group">
-                <label for="numero_personas">Número de Personas:</label>
-                <input type="number" class="form-control" id="numero_personas" name="numero_personas" required>
-            </div>
-            <div class="form-group">
-                <label for="mesa_numero">Número de Mesa:</label>
-                <input type="number" class="form-control" id="mesa_numero" name="mesa_numero" required>
-            </div>
-            <div class="form-group">
-                <label for="fecha_hora">Fecha y Hora (YYYY-MM-DD HH:MM):</label>
-                <input type="text" class="form-control" id="fecha_hora" name="fecha_hora" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Hacer Reserva</button>
+    <h1>{{ restaurante_info.nombre }}</h1>
+    <p><strong>Dirección:</strong> {{ restaurante_info.direccion }}</p>
+    <p><strong>Teléfono:</strong> {{ restaurante_info.telefono }}</p>
+    <p><strong>Horario de Atención:</strong> {{ restaurante_info.horario }}</p>
+    <p><strong>Días de Atención:</strong> {{ restaurante_info.dias }}</p>
+
+    <ul>
+        <li><a href="#conocenos">Conoce un poco más de nosotros</a></li>
+        <li><a href="#reservas">Reservas</a></li>
+        <li><a href="#menu">Menú</a></li>
+    </ul>
+
+    <div id="conocenos">
+        <h2>Conoce un poco más de nosotros</h2>
+        <p>Descripción general del restaurante...</p>
+    </div>
+
+    <div id="reservas">
+        <h2>Reservas</h2>
+        <form action="/reservar" method="post">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <!-- Agrega más campos según lo necesites, como fecha, hora, etc. -->
+            <br>
+            <input type="submit" value="Reservar">
         </form>
-        {% if mensaje %}
-            <div class="mt-4 alert alert-success" role="alert">
-                {{ mensaje }}
-            </div>
-        {% endif %}
+    </div>
+
+    <div id="menu">
+        <h2>Menú</h2>
+        <p>Aquí estará nuestro menú con una amplia variedad de platos...</p>
     </div>
 </body>
 </html>
+
